@@ -1,12 +1,14 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, ShieldAlert, FileJson, FileSpreadsheet, AlertTriangle } from 'lucide-react';
+import { Download, ShieldAlert, FileJson, FileSpreadsheet, AlertTriangle, Printer } from 'lucide-react';
 import { useDebounce } from '../../hooks/useDebounce';
 import { getExportPreview, downloadExport } from '../../lib/api';
 import { saveFile } from '../../lib/download';
+import { BulkPrintModal } from '../../components/export/BulkPrintModal';
 
 const UWindsorBufferingLoader: React.FC<{ message?: string }> = ({ message = "Synchronizing ACARE Facility Data..." }) => (
   <div className="flex flex-col items-center justify-center py-12 px-6 bg-gradient-to-b from-blue-50/40 via-white to-amber-50/20 border border-blue-100 rounded-2xl shadow-sm text-center space-y-4 my-4">
+
     <div className="relative flex items-center justify-center w-14 h-14">
       <div className="absolute inset-0 rounded-full border-4 border-[#FFCE00]/50 animate-ping" />
       <div className="w-12 h-12 border-4 border-[#005596] border-t-[#FFCE00] border-r-[#005596] rounded-full animate-spin shadow-md" />
@@ -40,8 +42,10 @@ export const ExportPage: React.FC = () => {
   const [endDate, setEndDate] = React.useState('');
   const [format, setFormat] = React.useState<'json' | 'csv'>('csv');
   const [showConfirm, setShowConfirm] = React.useState(false);
+  const [showBulkPrint, setShowBulkPrint] = React.useState(false);
   const [downloading, setDownloading] = React.useState(false);
   const [error, setError] = React.useState('');
+
 
   const debouncedStart = useDebounce(startDate, 500);
   const debouncedEnd = useDebounce(endDate, 500);
@@ -91,17 +95,27 @@ export const ExportPage: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-12">
       {/* Header */}
-      <div className="border-b border-slate-200 pb-5">
-        <h1 className="text-2xl font-extrabold text-[#005596] flex items-center gap-2">
-          <Download className="w-7 h-7 text-[#005596]" />
-          Data Export &amp; Backup
-        </h1>
-        <p className="text-xs text-slate-500 mt-1 max-w-2xl">
-          Download a complete backup of all ACARE data. Static reference data (users, facilities, rooms, tanks, species) is always
-          exported in full; the date range below only scopes event records (projects, census, water quality, incidents,
-          quarantine exemptions, audit logs).
-        </p>
+      <div className="border-b border-slate-200 pb-5 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-extrabold text-[#005596] flex items-center gap-2">
+            <Download className="w-7 h-7 text-[#005596]" />
+            Data Export &amp; Backup
+          </h1>
+          <p className="text-xs text-slate-500 mt-1 max-w-2xl">
+            Download a complete backup of all ACARE data or print facility paper-grid forms (Appendix 4b, 6, 7).
+          </p>
+        </div>
+        <button
+          onClick={() => setShowBulkPrint(true)}
+          className="px-4 py-2.5 bg-[#005596] hover:bg-[#003A66] text-white text-xs font-bold rounded-xl shadow-sm flex items-center gap-2 transition-all"
+        >
+          <Printer className="w-4 h-4 text-[#FFCE00]" />
+          <span>Paper-Grid PDF &amp; Bulk Print</span>
+        </button>
       </div>
+
+      <BulkPrintModal isOpen={showBulkPrint} onClose={() => setShowBulkPrint(false)} />
+
 
       {/* Date Range + Format */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-5">

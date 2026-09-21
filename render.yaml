@@ -1,0 +1,56 @@
+# Reference Blueprint mirroring the live Render service.
+#
+# The live service was created in the dashboard, not from this file, so applying
+# it to the existing service is not required. It documents the settings and the
+# variables the API reads, and lets a replacement service be created quickly.
+# Values are never stored here: every variable marked `sync: false` is entered in
+# the dashboard. See docs/OPERATIONS.md for what each one does.
+#
+# Keep the service URL stable if you recreate it: it is baked into installed APKs.
+services:
+  - type: web
+    name: uwindsor-accs
+    runtime: docker
+    region: oregon
+    plan: standard
+    branch: main
+    rootDir: apps/api
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: ./apps/api
+    autoDeployTrigger: commit
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: MONGODB_DB_NAME
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: SUPERADMIN_EMAIL
+        sync: false
+      - key: SUPERADMIN_PASSWORD
+        sync: false
+      - key: FCM_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: FCM_ANDROID_CHANNEL_ID
+        value: acare-alerts
+      - key: APP_UPDATE_TOKEN
+        sync: false
+      - key: APP_UPDATE_ENABLED
+        value: "true"
+      # Email: set RESEND_API_KEY, or the SMTP_* group, not necessarily both.
+      - key: RESEND_API_KEY
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: DEFAULT_SENDER_EMAIL
+        sync: false
+      - key: ENABLE_EMAIL_NOTIFICATIONS
+        value: "true"

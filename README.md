@@ -16,6 +16,12 @@ The MVP is actively developed and functional with the following core modules:
 - **Reports Dashboard:** Executive summary dashboard and comprehensive table logs with dynamic filters (Dates, Event Types, Project/AUPP).
 - **Audit Logging:** Immutable tracking of all critical system actions for regulatory compliance.
 
+## 📚 Documentation
+
+- [`docs/OPERATIONS.md`](docs/OPERATIONS.md) — deploys, environment variables, accounts, Android release, secret rotation (start here when taking over)
+- [`apps/web/ANDROID.md`](apps/web/ANDROID.md) — Android build, over-the-air updates and push
+- `docs/PRD.md`, `TRD.md`, `API-documentation.md`, `backend-schema.md`, `UIUX-design.md`, `implementation-plan.md` — product and design
+
 ---
 
 ## 🛠 Setup Manual (Quick Start with Docker)

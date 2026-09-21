@@ -82,21 +82,11 @@ async def init_db():
             DeviceToken, AppBundle,
         ],
     )
-    # Ensure superadmin account exists with known password
-    from .core.security import hash_password
+    # Ensure a superadmin account exists (created only when missing).
     from .models.user import RoleEnum, StatusEnum
-    su = await User.find_one({"email": "superadmin@uwindsor.ca"})
+    su = await User.find_one({"email": settings.SUPERADMIN_EMAIL})
     if not su:
-        su = User(
-            email="superadmin@uwindsor.ca",
-            password_hash=hash_password("ChangeMe123!"),
-            first_name="Super",
-            last_name="Admin",
-            requested_role=RoleEnum.super_admin,
-            role=RoleEnum.super_admin,
-            status=StatusEnum.active,
-        )
-        await su.insert()
+        await create_initial_superadmin()
     else:
         changed = False
         if su.role != RoleEnum.super_admin:
@@ -109,6 +99,38 @@ async def init_db():
             await su.save()
 
     await ensure_baseline_facility()
+
+
+async def create_initial_superadmin() -> User:
+    """Create the first super admin, taking the password from settings.
+
+    With SUPERADMIN_PASSWORD unset a random one is generated and printed once,
+    so a fresh deployment never ships with a password that is written down in
+    the repository.
+    """
+    import secrets
+    from .core.security import hash_password
+    from .models.user import RoleEnum, StatusEnum
+
+    password = settings.SUPERADMIN_PASSWORD
+    generated = not password
+    if generated:
+        password = secrets.token_urlsafe(16)
+    su = User(
+        email=settings.SUPERADMIN_EMAIL,
+        password_hash=hash_password(password),
+        first_name="Super",
+        last_name="Admin",
+        requested_role=RoleEnum.super_admin,
+        role=RoleEnum.super_admin,
+        status=StatusEnum.active,
+    )
+    await su.insert()
+    if generated:
+        print(f"Super admin created: {su.email} / {password}  (generated - change it after first login)")
+    else:
+        print(f"Super admin created: {su.email} (password from SUPERADMIN_PASSWORD)")
+    return su
 
 
 BASELINE_FACILITY_NAME = "LaSalle Freshwater Restoration Ecology Centre"

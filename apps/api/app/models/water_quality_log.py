@@ -12,10 +12,11 @@ class WaterQualityLog(Document):
     """
     tank_id: str
     project_id: Optional[str] = None
-    type: Literal["daily", "test_strip"]
+    type: Literal["daily", "test_strip"] = "daily"
     date: date
-    parameters: dict                  # stored exactly as submitted – no in_range
+    parameters: dict = Field(default_factory=dict)                  # stored exactly as submitted – no in_range
     comments: Optional[str] = None
+    idempotency_key: Optional[str] = None
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -25,5 +26,7 @@ class WaterQualityLog(Document):
             [("tank_id", 1), ("date", -1)],
             [("project_id", 1), ("date", -1)],
             [("date", -1)],
+            [("idempotency_key", 1)],
         ]
+
 

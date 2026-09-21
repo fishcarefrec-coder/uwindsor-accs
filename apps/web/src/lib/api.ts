@@ -150,6 +150,19 @@ export const getExportPreview = (params?: { start_date?: string; end_date?: stri
 export const downloadExport = (params: { start_date?: string; end_date?: string; format: 'json' | 'csv' }) =>
   api.get('/export/backup', { params, responseType: 'blob' });
 
+export const downloadPdfGrid = (params: {
+  form_type: 'appendix_4b' | 'appendix_6' | 'appendix_7' | 'incident';
+  room_code?: string;
+  pi_name?: string;
+  aupp_number?: string;
+  species?: string;
+  week_of?: string;
+}) => api.get('/export/pdf-grid', { params, responseType: 'blob' });
+
+export const downloadBulkPdfZip = (roomCodes: string[]) =>
+  api.post('/export/bulk-pdf', null, { params: { room_codes: roomCodes }, responseType: 'blob' });
+
+
 export const verifyPassword = (password: string) =>
   api.post('/auth/verify-password', { password });
 

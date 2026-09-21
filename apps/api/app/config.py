@@ -13,6 +13,13 @@ class Settings(BaseSettings):
     REMEMBER_ME_EXPIRE_DAYS: int = 30
     ENABLE_INDIVIDUAL_FISH_TRACKING: bool = False
 
+    # Account created on first boot against an empty database. Existing accounts
+    # are never touched, so changing these later does not alter or reset one.
+    # Leave SUPERADMIN_PASSWORD empty and a random password is generated and
+    # printed once to the service log — read it there, log in, and change it.
+    SUPERADMIN_EMAIL: str = "superadmin@uwindsor.ca"
+    SUPERADMIN_PASSWORD: str = ""
+
     RATE_LIMIT_LOGIN: str = "5/minute"
     RATE_LIMIT_DATA_ENTRY: str = "60/minute"
     RATE_LIMIT_ADMIN: str = "30/minute"

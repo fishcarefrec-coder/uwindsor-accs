@@ -1,7 +1,7 @@
 import asyncio
-from app.db import init_db, ensure_baseline_facility
-from app.models.user import User, RoleEnum, StatusEnum
-from app.core.security import hash_password
+from app.config import settings
+from app.db import init_db, ensure_baseline_facility, create_initial_superadmin
+from app.models.user import User
 
 from app.models.facility import Tank
 
@@ -9,23 +9,11 @@ async def seed():
     await init_db()
     
     # 1. Seed Super Admin
-    existing = await User.find_one({"email": "superadmin@uwindsor.ca"})
+    existing = await User.find_one({"email": settings.SUPERADMIN_EMAIL})
     if not existing:
-        su = User(
-            email="superadmin@uwindsor.ca",
-            password_hash=hash_password("ChangeMe123!"),
-            first_name="Super",
-            last_name="Admin",
-            requested_role=RoleEnum.super_admin,
-            role=RoleEnum.super_admin,
-            status=StatusEnum.active,
-        )
-        await su.insert()
-        print("Super admin created: superadmin@uwindsor.ca / ChangeMe123!")
+        await create_initial_superadmin()
     else:
-        existing.password_hash = hash_password("ChangeMe123!")
-        await existing.save()
-        print("Super admin password reset to ChangeMe123!")
+        print("Super admin already exists; skipping password reset.")
 
     # 2. Seed the baseline facility, room, and 14 tanks.
     # Shared with init_db so there is a single definition of the baseline: the

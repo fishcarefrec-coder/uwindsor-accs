@@ -20,6 +20,8 @@ class IncidentReport(Document):
     aquatic_condition_checked: bool = False
     vet_contacted: bool = False
     researcher_notified: bool = False
+    photo_attachment_url: Optional[str] = None
+    idempotency_key: Optional[str] = None
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -29,5 +31,7 @@ class IncidentReport(Document):
             [("tank_id", 1), ("date", -1)],
             [("project_id", 1), ("date", -1)],
             [("date", -1)],
+            [("idempotency_key", 1)],
         ]
+
 

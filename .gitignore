@@ -33,7 +33,9 @@ Thumbs.db
 .antigravity/
 .claude/
 CLAUDE.md
-docs/
+# docs/ is tracked (handover and design docs); only the university's scanned
+# source PDFs stay out, because this repository is public.
+docs/*.pdf
 
 # Root Scratch & Helper Scripts
 scratch/

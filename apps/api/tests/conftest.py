@@ -1,5 +1,6 @@
 import pytest
 
+from app.config import settings
 from app.core.limiter import limiter
 
 
@@ -19,3 +20,14 @@ def disable_rate_limiting():
     limiter.enabled = False
     yield
     limiter.enabled = True
+
+
+@pytest.fixture(autouse=True, scope="session")
+def known_superadmin_password():
+    """Give the first-boot super admin a fixed password for the test session.
+
+    Production leaves SUPERADMIN_PASSWORD unset and gets a random one; the
+    acceptance tests log in as the seeded account, so they need to know it.
+    """
+    settings.SUPERADMIN_PASSWORD = "ChangeMe123!"
+    yield

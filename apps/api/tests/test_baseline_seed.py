@@ -13,8 +13,14 @@ DB_NAME = "acare-mvp-baseline-seed-test"
 
 
 @pytest.fixture
-async def scratch_db():
-    """Point Beanie at a throwaway database so seeding cannot touch dev data."""
+async def scratch_db(monkeypatch):
+    """Point Beanie at a throwaway database so seeding cannot touch dev data.
+
+    seed() calls init_db(), which re-initialises Beanie from settings, so the
+    database name has to be overridden there too or seed() silently runs
+    against (and edits) the real dev database.
+    """
+    monkeypatch.setattr(settings, "MONGODB_DB_NAME", DB_NAME)
     client = AsyncIOMotorClient(settings.MONGO_URI)
     await client.drop_database(DB_NAME)
     await init_beanie(database=client[DB_NAME], document_models=[Facility, Room, Tank, User])

@@ -44,7 +44,7 @@ docker compose up --build
 - **API (Backend):** [http://localhost:8000](http://localhost:8000)
 - **API Swagger Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
 
-*(Note: The very first time you start the app, the backend automatically seeds a Super Admin account: `superadmin@uwindsor.ca` / `ChangeMe123!`)*
+*(Note: The very first time the backend starts against an empty database it creates a Super Admin account. The email is `SUPERADMIN_EMAIL` (default `superadmin@uwindsor.ca`). The password is `SUPERADMIN_PASSWORD` if you set it; otherwise a random one is generated and printed once in the API log, so read it there, sign in, and change it. An existing account is never modified or reset.)*
 
 ---
 

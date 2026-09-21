@@ -23,9 +23,7 @@ async def seed():
         await su.insert()
         print("Super admin created: superadmin@uwindsor.ca / ChangeMe123!")
     else:
-        existing.password_hash = hash_password("ChangeMe123!")
-        await existing.save()
-        print("Super admin password reset to ChangeMe123!")
+        print("Super admin already exists; skipping password reset.")
 
     # 2. Seed the baseline facility, room, and 14 tanks.
     # Shared with init_db so there is a single definition of the baseline: the

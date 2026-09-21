@@ -31,3 +31,32 @@ def known_superadmin_password():
     """
     settings.SUPERADMIN_PASSWORD = "ChangeMe123!"
     yield
+
+
+@pytest.fixture(autouse=True)
+async def ensure_superadmin_for_tests():
+    """Ensure superadmin user exists with default password in test database."""
+    from app.db import init_db
+    from app.models.user import User, RoleEnum, StatusEnum
+    from app.core.security import hash_password
+
+    try:
+        await init_db()
+        existing = await User.find_one({"email": "superadmin@uwindsor.ca"})
+        if not existing:
+            su = User(
+                email="superadmin@uwindsor.ca",
+                password_hash=hash_password("ChangeMe123!"),
+                first_name="Super",
+                last_name="Admin",
+                requested_role=RoleEnum.super_admin,
+                role=RoleEnum.super_admin,
+                status=StatusEnum.active,
+            )
+            await su.insert()
+        else:
+            existing.password_hash = hash_password("ChangeMe123!")
+            await existing.save()
+    except Exception:
+        pass
+
